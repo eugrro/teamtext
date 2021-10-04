@@ -19,17 +19,28 @@ void main() {
 //LOOK INTO THIS https://pub.dev/packages/animated_text_kit
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     //SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
       theme: ThemeData(
         brightness: Brightness.light,
         scaffoldBackgroundColor: Constants.theme.background,
       ),
+      builder: (context, child) {
+        return ScrollConfiguration(
+          behavior: NoScrollGlow(),
+          child: HomePage(),
+        );
+      },
     );
+  }
+}
+
+class NoScrollGlow extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
   }
 }
