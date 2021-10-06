@@ -3,9 +3,11 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:teamtext/home_page.dart';
 import 'package:teamtext/phone_login.dart';
 import 'constants.dart' as Constants;
 import 'theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({Key? key}) : super(key: key);
@@ -23,12 +25,16 @@ class _StartPageState extends State<StartPage> {
   @override
   void initState() {
     //setUpPreferences();
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return startScreen();
+    if (FirebaseAuth.instance.currentUser != null) {
+      return HomePage();
+    } else {
+      return startScreen();
+    }
+
     /*FutureBuilder<dynamic>(
       future: _memoizer.runOnce(() async {
         return await checkIfUserIsSignedIn();

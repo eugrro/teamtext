@@ -4,12 +4,14 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:teamtext/home_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'start_page.dart';
 import 'constants.dart' as Constants;
 import 'constants.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   theme.changeToLightMode();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(new MyApp());
@@ -28,12 +30,14 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
         scaffoldBackgroundColor: Constants.theme.background,
       ),
-      builder: (context, child) {
-        return ScrollConfiguration(
-          behavior: NoScrollGlow(),
-          child: HomePage(),
-        );
-      },
+      home: Builder(
+        builder: (context) {
+          return ScrollConfiguration(
+            behavior: NoScrollGlow(),
+            child: StartPage(),
+          );
+        },
+      ),
     );
   }
 }

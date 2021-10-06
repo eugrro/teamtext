@@ -1,8 +1,11 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:teamtext/start_page.dart';
 //import 'package:klip/currentUser.dart' as currentUser;
 import 'constants.dart' as Constants;
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -61,7 +64,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
           bodyInfo("Privacy Policy", ""),
           bodyInfo("Terms of Service", ""),
           title("Account Actions"),
-          bodyInfo("Log Out", ""),
+          GestureDetector(
+            onTap: () {
+              FirebaseAuth.instance.signOut();
+              while (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
+              pushNewScreen(
+                context,
+                screen: StartPage(),
+                withNavBar: false,
+                pageTransitionAnimation: PageTransitionAnimation.cupertino,
+              );
+            },
+            child: bodyInfo("Log Out", ""),
+          ),
           Container(
             color: Constants.theme.background,
             child: Padding(

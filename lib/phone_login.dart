@@ -6,6 +6,10 @@ import 'package:flutter/services.dart';
 import 'package:teamtext/home_page.dart';
 //import 'package:klip/currentUser.dart' as currentUser;
 import 'constants.dart' as Constants;
+import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
+
+FirebaseAuth auth = FirebaseAuth.instance;
 
 class PhoneLogin extends StatefulWidget {
   const PhoneLogin({Key? key}) : super(key: key);
@@ -18,10 +22,21 @@ class _PhoneLoginState extends State<PhoneLogin> {
   int currentBox = 0;
   bool isVerifying = false;
   List<String> textList = ["", "", "", "", "", "", "", "", "", ""];
+  String verificationId = "";
+  late User signedInUser;
+  late String inputNumber;
+  bool isUserSignedIn = false;
   int lastPressed = DateTime.now().millisecondsSinceEpoch;
   @override
   void initState() {
     super.initState();
+    TextField(
+      // REQUIRED to open the number keyboard
+      focusNode: FocusNode(),
+      autofocus: true,
+      keyboardType: TextInputType.number,
+      inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly], // Only numbers can be entered
+    );
     SystemChannels.textInput.invokeMethod('TextInput.show');
   }
 
@@ -49,6 +64,20 @@ class _PhoneLoginState extends State<PhoneLogin> {
     });
   }
 
+  String getNumber(int len) {
+    String ret = "";
+    for (int i = 0; i < len; i++) {
+      ret += textList[i];
+    }
+    return ret;
+  }
+
+  void clearNumbers(int len) {
+    for (int i = 0; i < len; i++) {
+      textList[i] = "";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -64,7 +93,7 @@ class _PhoneLoginState extends State<PhoneLogin> {
             color: Constants.theme.background,
             child: Column(
               children: [
-                buildInput(10),
+                isVerifying ? buildInput(6) : buildInput(10),
                 Text(
                   "Enter your phone number",
                   style: TextStyle(color: Colors.grey, fontSize: 15),
@@ -73,16 +102,38 @@ class _PhoneLoginState extends State<PhoneLogin> {
                   height: 75,
                 ),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
                     if (!isVerifying) {
+                      SystemChannels.textInput.invokeMethod('TextInput.hide');
                       setState(() {
+                        inputNumber = "+1" + getNumber(10);
+                        clearNumbers(10);
                         isVerifying = true;
                       });
+                      await verifyPhoneNumber(inputNumber);
+                      if (isUserSignedIn) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage()),
+                        );
+                      } else {
+                        SystemChannels.textInput.invokeMethod('TextInput.show');
+                      }
                     } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomePage()),
-                      );
+                      if (verificationId == "") {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("Verification ID is null"),
+                        ));
+                      } else {
+                        SystemChannels.textInput.invokeMethod('TextInput.hide');
+                        await verifyCode(verificationId, getNumber(6));
+                        if (isUserSignedIn) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                          );
+                        }
+                      }
                     }
                   },
                   child: Container(
@@ -187,5 +238,57 @@ class _PhoneLoginState extends State<PhoneLogin> {
         ),
       ),
     );
+  }
+
+  Future<void> verifyPhoneNumber(String number) async {
+    await auth.verifyPhoneNumber(
+      phoneNumber: number,
+      verificationFailed: (FirebaseAuthException e) {
+        if (e.code == 'invalid-phone-number') {
+          print('The provided phone number is not valid.');
+        }
+      },
+      codeSent: (String _verificationId, int? resendToken) async {
+        setState(() {
+          verificationId = _verificationId;
+        });
+      },
+      timeout: const Duration(seconds: 60),
+      codeAutoRetrievalTimeout: (String verificationId) {
+        // Auto-resolution timed out...
+      },
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        // ANDROID ONLY!
+        final User? user = (await auth.signInWithCredential(credential)).user;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Successfully signed in UID: ${user?.uid}'),
+        ));
+        setState(() {
+          isUserSignedIn = true;
+        });
+      },
+    );
+  }
+
+  Future<void> verifyCode(String verificationID, String code) async {
+    print(verificationID);
+    print(code);
+    try {
+      final PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: verificationID,
+        smsCode: code,
+      );
+      final User? user = (await auth.signInWithCredential(credential)).user;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Successfully signed in UID: ${user?.uid}'),
+      ));
+      setState(() {
+        isUserSignedIn = true;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Failed to sign in'),
+      ));
+    }
   }
 }
