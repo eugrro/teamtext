@@ -60,6 +60,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           title("Feedback"),
           bodyInfo("I Spotted a Bug", ""),
           bodyInfo("I Have a Suggestion", ""),
+          bodyInfo("Request a Feature", ""),
           title("Privacy"),
           bodyInfo("Privacy Policy", ""),
           bodyInfo("Terms of Service", ""),

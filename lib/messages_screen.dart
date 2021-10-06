@@ -2,9 +2,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:teamtext/add_manually.dart';
+import 'package:teamtext/messenger_page.dart';
 import 'package:teamtext/qr_preview.dart';
 //import 'package:klip/currentUser.dart' as currentUser;
 import 'constants.dart' as Constants;
+import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class MessagesScreen extends StatefulWidget {
   const MessagesScreen({Key? key}) : super(key: key);
@@ -121,7 +123,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
         itemBuilder: (context, index) {
           return InkWell(
             onTap: () {
-              print("tapped");
+              pushNewScreen(
+                context,
+                screen: MessengerPage(),
+                withNavBar: false,
+                pageTransitionAnimation: PageTransitionAnimation.cupertino,
+              );
             },
             child: Padding(
               padding: const EdgeInsets.only(left: 20, right: 20),
