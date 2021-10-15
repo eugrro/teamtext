@@ -17,8 +17,7 @@ class MessagesScreen extends StatefulWidget {
 }
 
 class _MessagesScreenState extends State<MessagesScreen> {
-  List<String> peopleList = ["John Smith", "George Johnson", "Amelia Earhart"];
-  //List<String> peopleList = [];
+  List<dynamic> peopleList = [];
   @override
   void initState() {
     super.initState();
@@ -51,6 +50,21 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     child: Row(
                       children: [
                         GestureDetector(
+                            behavior: HitTestBehavior.translucent,
+                            onTap: () async {
+                              //Code to refresh the list of contact
+                              await getTeamMembers("12345").then((value) => setState(() {
+                                    peopleList = value;
+                                  }));
+                            },
+                            child: Icon(
+                              Icons.refresh_rounded,
+                              size: 30,
+                            )),
+                        Container(
+                          width: 10,
+                        ),
+                        GestureDetector(
                           behavior: HitTestBehavior.translucent,
                           onTap: () {
                             Navigator.push(
@@ -69,12 +83,13 @@ class _MessagesScreenState extends State<MessagesScreen> {
                         ),
                         GestureDetector(
                           behavior: HitTestBehavior.translucent,
-                          onTap: () {
+                          onTap: () async {
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => AddManually()),
                             );
-                            createUser("012345", "Eugene", "Rozental", "eugene.rozental@gmail.com", "1234567890");
+                            dynamic insertedId = await createUser("Eugene", "Rozental", "eugene.rozental@gmail.com", "1234567890");
+                            print(await joinTeam("12345", insertedId));
                           },
                           child: Icon(
                             Icons.add,
@@ -123,6 +138,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
         shrinkWrap: true,
         itemCount: peopleList.length,
         itemBuilder: (context, index) {
+          String nameOfUser = peopleList[index]["fName"] + " " + peopleList[index]["lName"];
           return InkWell(
             onTap: () {
               pushNewScreen(
@@ -147,7 +163,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          getInitials(peopleList[index]),
+                          getInitials(nameOfUser),
                           style: TextStyle(color: Constants.theme.background, fontSize: 17),
                         ),
                       ),
@@ -160,7 +176,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          peopleList[index],
+                          nameOfUser,
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400, color: Constants.theme.foreground),
                         ),
                         Text(
