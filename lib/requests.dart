@@ -1,22 +1,71 @@
-/*import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'constants.dart' as Constants;
 import 'package:dio/dio.dart';
 
-import 'constants.dart' as Constants;
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-Response response;
-Dio dio = new Dio();
+late Response response;
+Dio dio = Dio();
 Future<String> getToken() async {
   User? firebaseUser = FirebaseAuth.instance.currentUser;
-  final tokenID = await firebaseUser.getIdToken();
+  final tokenID = await firebaseUser!.getIdToken();
   final tokenString = tokenID.toString();
   return tokenString;
 }
 
+Future<String> createUser(String uid, String fName, String lName, String email, String pNumber) async {
+  Response response;
+  try {
+    Map<String, String> params = {
+      "uid": uid,
+      "fName": fName,
+      "lName": lName,
+      "email": email,
+      "pNumber": pNumber,
+    };
+
+    String reqString = Constants.nodeURL + "api/createUser";
+    print("Sending Request To: " + reqString);
+    response = await dio.post(reqString, data: params);
+
+    if (response.statusCode == 200) {
+      return "CreatedUser";
+    } else {
+      print("Returned error " + response.statusCode.toString());
+      return "FailedToCreateUser";
+    }
+  } catch (err) {
+    print("Ran Into Error! createUser => " + err.toString());
+  }
+  return "FailedToCreatedUser";
+}
+
+Future<String> removeUser(String uid) async {
+  Response response;
+  try {
+    Map<String, String> params = {
+      "uid": uid,
+    };
+
+    String reqString = Constants.nodeURL + "api/removeUser";
+    print("Sending Request To: " + reqString);
+    response = await dio.post(reqString, data: params);
+
+    if (response.statusCode == 200) {
+      return "RemovedUser";
+    } else {
+      print("Returned error " + response.statusCode.toString());
+      return "FailedToRemoveUser";
+    }
+  } catch (err) {
+    print("Ran Into Error! removeUser => " + err.toString());
+  }
+  return "FailedToRemoveUser";
+}
+/*
 Future<String> updateOne(String uid, String param, String paramVal) async {
   Response response;
   print("Updating " + param + " to " + paramVal + " in mongo");
@@ -83,30 +132,7 @@ Future<String> addComment(String pid, String comm, String time) async {
   return "";
 }
 
-Future<String> reportBug(String uid, String bug) async {
-  Response response;
-  try {
-    Map<String, String> params = {
-      "uid": uid,
-      "bug": bug,
-    };
 
-    String reqString = Constants.nodeURL + "misc/reportBug";
-    print("Sending Request To: " + reqString);
-    response = await dio.post(reqString, queryParameters: params);
-
-    if (response.statusCode == 200) {
-      print("Returned 200");
-      return "BugReportedSuccessfully";
-    } else {
-      print("Returned error " + response.statusCode.toString());
-      return "BugReportedUnsuccessfully";
-    }
-  } catch (err) {
-    print("Ran Into Error! reportBug => " + err.toString());
-  }
-  return "BugReportedUnsuccessfully";
-}
 
 // ignore: missing_return
 Future<String> testConnection() async {

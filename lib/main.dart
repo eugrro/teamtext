@@ -16,6 +16,7 @@ void main() async {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(new MyApp());
   });
+  print(Constants.getRandomString(27));
 }
 
 //LOOK INTO THIS https://pub.dev/packages/animated_text_kit

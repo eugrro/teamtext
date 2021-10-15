@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:teamtext/add_manually.dart';
 import 'package:teamtext/messenger_page.dart';
 import 'package:teamtext/qr_preview.dart';
+import 'package:teamtext/requests.dart';
 //import 'package:klip/currentUser.dart' as currentUser;
 import 'constants.dart' as Constants;
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -73,6 +74,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                               context,
                               MaterialPageRoute(builder: (context) => AddManually()),
                             );
+                            createUser("012345", "Eugene", "Rozental", "eugene.rozental@gmail.com", "1234567890");
                           },
                           child: Icon(
                             Icons.add,
