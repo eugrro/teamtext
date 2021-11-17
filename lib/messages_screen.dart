@@ -87,9 +87,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => AddManually()),
-                            );
-                            dynamic insertedId = await createUser("Eugene", "Rozental", "eugene.rozental@gmail.com", "1234567890");
-                            print(await joinTeam("12345", insertedId));
+                            ).then((value) async => await getTeamMembers("12345").then((value) => setState(() {
+                                  peopleList = value;
+                                })));
                           },
                           child: Icon(
                             Icons.add,
