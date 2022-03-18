@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:teamtext/start_page.dart';
+import 'package:teamtext/suggestion_page.dart';
 //import 'package:klip/currentUser.dart' as currentUser;
 import 'constants.dart' as Constants;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -59,7 +60,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
           bodyInfo("I Have a Privacy Question", ""),
           title("Feedback"),
           bodyInfo("I Spotted a Bug", ""),
-          bodyInfo("I Have a Suggestion", ""),
+          GestureDetector(
+            onTap: () {
+              pushNewScreen(
+                context,
+                screen: SuggestionPage(),
+                withNavBar: false,
+                pageTransitionAnimation: PageTransitionAnimation.cupertino,
+              );
+            },
+            child: bodyInfo("I Have a Suggestion", ""),
+          ),
           bodyInfo("Request a Feature", ""),
           title("Privacy"),
           bodyInfo("Privacy Policy", ""),
