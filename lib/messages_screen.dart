@@ -17,7 +17,9 @@ class MessagesScreen extends StatefulWidget {
 }
 
 class _MessagesScreenState extends State<MessagesScreen> {
-  List<dynamic> peopleList = [];
+  List<dynamic> peopleList = [
+    {"fName": "John", "lName": "Smith"}
+  ];
   @override
   void initState() {
     super.initState();
@@ -138,6 +140,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
         shrinkWrap: true,
         itemCount: peopleList.length,
         itemBuilder: (context, index) {
+          print(peopleList[index]);
           String nameOfUser = peopleList[index]["fName"] + " " + peopleList[index]["lName"];
           return InkWell(
             onTap: () {
