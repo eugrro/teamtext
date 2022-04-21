@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
+import 'package:teamtext/home_page.dart';
+import 'package:flutter/services.dart';
 
 class MyTheme extends ChangeNotifier {
   Color darkColor = Color(0xff282828);

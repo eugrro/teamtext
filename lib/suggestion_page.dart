@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 //import 'package:klip/currentUser.dart' as currentUser;
 import 'constants.dart' as Constants;
+import 'package:flutter/services.dart';
+import 'package:teamtext/home_page.dart';
 
 class SuggestionPage extends StatefulWidget {
   const SuggestionPage({Key? key}) : super(key: key);

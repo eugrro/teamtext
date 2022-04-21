@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:teamtext/home_page.dart';
 //import 'package:klip/currentUser.dart' as currentUser;
 import 'constants.dart' as Constants;
+import './current_user.dart' as currentUser;
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:async';
 

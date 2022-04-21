@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:teamtext/requests.dart';
 //import 'package:klip/currentUser.dart' as currentUser;
 import 'constants.dart' as Constants;
+import './current_user.dart' as currentUser;
 
 class AddManually extends StatefulWidget {
   const AddManually({Key? key}) : super(key: key);
