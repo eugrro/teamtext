@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
         builder: (context) {
           return ScrollConfiguration(
             behavior: NoScrollGlow(),
-            child: StartPage(),
+            child: HomePage(),
           );
         },
       ),
